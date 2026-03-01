@@ -138,17 +138,27 @@ backend/
 │   ├── routes/ 
 │   ├── middleware/ 
 │   └── app.js 
-│── .env 
+│── .env      # environment variables including MongoDB URI and PORT
 │── package.json 
- 
 
-5.3 Authentication Flow 
+**Environment Setup**
 
-User logs in 
+Create a `.env` file in the `backend` directory with the following variables:
 
-Credentials are validated 
+```dotenv
+# MongoDB Atlas connection string, replace <password> if needed
+MONGODB_URI=mongodb+srv://pravallika4620_db_user:HwjSSRN87zpJxhyS@studysessiontracker.e6atmte.mongodb.net/StudySessionTracker?retryWrites=true&w=majority
 
-JWT token is generated 
+# optional fallback
+DATABASE_URI=
+
+# server port
+PORT=5000
+```
+
+The backend uses `connectDB` in `src/utils/Connect.js` to read `MONGODB_URI` (or
+`DATABASE_URI`) and establish a connection to the database.  Ensure the user and
+password credentials are valid and the network allows outbound MongoDB Atlas traffic.
 
 Token is used for authorized requests 
 
