@@ -18,17 +18,9 @@ const StudySessionSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
 }, {
-  timestamps: false
+  timestamps: true
 });
 
 module.exports = mongoose.models.StudySession || mongoose.model('StudySession', StudySessionSchema);

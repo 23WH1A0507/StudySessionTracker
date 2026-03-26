@@ -12,44 +12,23 @@ const seedDatabase = async () => {
         await User.deleteMany({});
         await StudySession.deleteMany({});
 
-        // Seed Users
+        // Seed Users (default password for all seeded users: Password123!)
         const users = await User.create([
-            {
-                name: 'Alice Student',
-                email: 'alice@student.college.edu',
-                role: 'student'
-            },
-            {
-                name: 'Bob Student',
-                email: 'bob@student.college.edu',
-                role: 'student'
-            },
             {
                 name: 'Admin User',
                 email: 'admin@college.edu',
+                password: 'Password123!',
                 role: 'admin'
             }
         ]);
 
-        // Seed Study Sessions
+        // Seed Study Sessions (admin only)
         await StudySession.create([
             {
                 userId: users[0]._id,
-                subject: 'Data Structures',
-                duration: 120,
+                subject: 'Admin Management Review',
+                duration: 60,
                 date: new Date('2023-10-15')
-            },
-            {
-                userId: users[0]._id,
-                subject: 'Operating Systems',
-                duration: 90,
-                date: new Date('2023-10-16')
-            },
-            {
-                userId: users[1]._id,
-                subject: 'Database Management Systems',
-                duration: 100,
-                date: new Date('2023-10-17')
             }
         ]);
 
@@ -60,5 +39,10 @@ const seedDatabase = async () => {
         process.exit(1);
     }
 };
+
+// Run seed if this file is executed directly
+if (require.main === module) {
+    seedDatabase();
+}
 
 module.exports = { seedDatabase };

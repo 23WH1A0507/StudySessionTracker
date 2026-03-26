@@ -1,56 +1,38 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const { connectDB } = require('./utils/Connect');
 
-const User = require('./models/User');
-const StudySession = require('./models/Session');
+const authRoutes = require('./routes/auth');
+const sessionRoutes = require('./routes/sessions');
+const userRoutes = require('./routes/users');
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => res.send('StudySessionTracker API'));
-
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/sessions', sessionRoutes);
+app.use('/api/users', userRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not found' });
 });
 
-app.post('/api/users', async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-app.get('/api/sessions', async (req, res) => {
-  try {
-    const sessions = await StudySession.find({}).populate('userId', 'name email');
-    res.json(sessions);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-app.post('/api/sessions', async (req, res) => {
-  try {
-    const session = new StudySession(req.body);
-    await session.save();
-    res.status(201).json(session);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+// Error handler (must be last)
+app.use((err, req, res, next) => {
+  console.error('Server error:',  err.message || err);
+  const status = err.status || err.statusCode || 500;
+  const message = err.message || 'Internal server error';
+  res.status(status).json({ message });
 });
 
 const start = async () => {
